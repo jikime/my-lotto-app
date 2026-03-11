@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { LottoGame } from "@/types/lotto";
 import {
   generateLottoNumbers,
@@ -20,9 +20,11 @@ import { toast } from "sonner";
 const DEFAULT_GAME_COUNT = 5;
 
 export function LottoApp() {
-  const [games, setGames] = useState<LottoGame[]>(() =>
-    generateMultipleGames(DEFAULT_GAME_COUNT)
-  );
+  const [games, setGames] = useState<LottoGame[]>([]);
+
+  useEffect(() => {
+    setGames(generateMultipleGames(DEFAULT_GAME_COUNT));
+  }, []);
 
   const handleGenerateAll = useCallback(() => {
     setGames(generateMultipleGames(DEFAULT_GAME_COUNT));
