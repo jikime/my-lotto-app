@@ -30,10 +30,23 @@ const SLIDER_LEFT: Record<TabValue, string> = {
 };
 const SLIDER_WIDTH = "calc((100% - 20px) / 3)";
 
+const PILL_GRADIENT: Record<TabValue, string> = {
+  generate: "bg-gradient-to-r from-blue-400 via-blue-500 to-indigo-600",
+  favorites: "bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500",
+  stats: "bg-gradient-to-r from-violet-400 via-violet-500 to-purple-700",
+};
+
+const PILL_GLOW_CLASS: Record<TabValue, string> = {
+  generate: "tab-pill-generate",
+  favorites: "tab-pill-favorites",
+  stats: "tab-pill-stats",
+};
+
 export function LottoApp() {
   const [games, setGames] = useState<LottoGame[]>([]);
   const [activeTab, setActiveTab] = useState<TabValue>("generate");
   const [slideDirection, setSlideDirection] = useState<"right" | "left">("right");
+  const [clickedTab, setClickedTab] = useState<TabValue | null>(null);
 
   useEffect(() => {
     setGames(generateMultipleGames(DEFAULT_GAME_COUNT));
@@ -89,10 +102,13 @@ export function LottoApp() {
 
   const handleTabChange = useCallback(
     (newTab: string) => {
+      const tab = newTab as TabValue;
       const prevIdx = TAB_ORDER.indexOf(activeTab);
-      const newIdx = TAB_ORDER.indexOf(newTab as TabValue);
+      const newIdx = TAB_ORDER.indexOf(tab);
       setSlideDirection(newIdx > prevIdx ? "right" : "left");
-      setActiveTab(newTab as TabValue);
+      setClickedTab(tab);
+      setActiveTab(tab);
+      setTimeout(() => setClickedTab(null), 200);
     },
     [activeTab]
   );
@@ -103,7 +119,7 @@ export function LottoApp() {
   const tabTriggerBase = cn(
     "group relative z-10 flex items-center justify-center gap-2 py-3.5 px-3 rounded-xl",
     "text-sm font-semibold cursor-pointer border-0 outline-none select-none",
-    "transition-all duration-200 ease-out",
+    "transition-all duration-200 ease-out active:scale-95",
     "text-gray-500 dark:text-gray-400"
   );
 
@@ -130,14 +146,14 @@ export function LottoApp() {
             {/* Gradient sliding pill indicator */}
             <div
               className={cn(
-                "absolute top-1.5 bottom-1.5 rounded-xl pointer-events-none shadow-lg",
-                "transition-[left] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]",
-                activeTab === "generate" &&
-                  "bg-gradient-to-r from-blue-400 via-blue-500 to-indigo-600 shadow-blue-500/30",
-                activeTab === "favorites" &&
-                  "bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500 shadow-orange-500/30",
-                activeTab === "stats" &&
-                  "bg-gradient-to-r from-violet-400 via-violet-500 to-purple-700 shadow-violet-500/30"
+                "absolute top-1.5 bottom-1.5 rounded-xl pointer-events-none",
+                "transition-[left,width] duration-[320ms] ease-[cubic-bezier(0.34,1.56,0.64,1)]",
+                PILL_GRADIENT[activeTab],
+                PILL_GLOW_CLASS[activeTab],
+                /* shimmer overlay */
+                "after:absolute after:inset-0 after:rounded-xl after:opacity-0 hover:after:opacity-100",
+                "after:bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.18)_50%,transparent_100%)]",
+                "after:bg-[length:200%_100%] after:[animation:shimmerSweep_1.8s_linear_infinite]"
               )}
               style={{
                 width: SLIDER_WIDTH,
@@ -152,10 +168,15 @@ export function LottoApp() {
                 className={cn(
                   tabTriggerBase,
                   "hover:text-blue-600 dark:hover:text-blue-400",
-                  "data-active:text-white"
+                  "data-active:text-white",
+                  clickedTab === "generate" && "tab-trigger-press"
                 )}
               >
-                <Dices className="h-5 w-5 shrink-0 transition-transform duration-300 group-hover:rotate-12 group-data-active:rotate-[-12deg]" />
+                <Dices className={cn(
+                  "h-5 w-5 shrink-0 transition-all duration-300",
+                  "group-hover:rotate-12 group-hover:scale-110",
+                  "group-data-active:rotate-[-12deg] group-data-active:drop-shadow-[0_0_6px_rgba(255,255,255,0.6)]"
+                )} />
                 <span>번호 생성</span>
                 <span
                   className={cn(
@@ -176,14 +197,16 @@ export function LottoApp() {
                 className={cn(
                   tabTriggerBase,
                   "hover:text-amber-600 dark:hover:text-amber-400",
-                  "data-active:text-white"
+                  "data-active:text-white",
+                  clickedTab === "favorites" && "tab-trigger-press"
                 )}
               >
                 <Star
                   className={cn(
                     "h-5 w-5 shrink-0 transition-all duration-300",
                     "group-hover:scale-125 group-hover:rotate-12",
-                    "group-data-active:fill-white group-data-active:text-white group-data-active:scale-110"
+                    "group-data-active:fill-white group-data-active:text-white group-data-active:scale-110",
+                    "group-data-active:drop-shadow-[0_0_6px_rgba(255,255,255,0.6)]"
                   )}
                 />
                 <span>즐겨찾기</span>
@@ -208,10 +231,15 @@ export function LottoApp() {
                 className={cn(
                   tabTriggerBase,
                   "hover:text-violet-600 dark:hover:text-violet-400",
-                  "data-active:text-white"
+                  "data-active:text-white",
+                  clickedTab === "stats" && "tab-trigger-press"
                 )}
               >
-                <BarChart3 className="h-5 w-5 shrink-0 transition-transform duration-300 group-hover:scale-125 group-data-active:scale-110" />
+                <BarChart3 className={cn(
+                  "h-5 w-5 shrink-0 transition-all duration-300",
+                  "group-hover:scale-125",
+                  "group-data-active:scale-110 group-data-active:drop-shadow-[0_0_6px_rgba(255,255,255,0.6)]"
+                )} />
                 <span>번호 통계</span>
               </TabsTrigger>
             </TabsList>
