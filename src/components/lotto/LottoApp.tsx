@@ -92,22 +92,52 @@ export function LottoApp() {
         </div>
 
         <Tabs defaultValue="generate" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="generate" className="flex items-center gap-1.5">
-              <Dices className="h-4 w-4" />
+          <TabsList className="grid w-full grid-cols-3 h-auto p-1.5 bg-gradient-to-r from-blue-100 via-purple-50 to-yellow-100 dark:from-blue-950 dark:via-purple-950 dark:to-yellow-950 rounded-2xl shadow-inner gap-1.5">
+            <TabsTrigger
+              value="generate"
+              className="group flex flex-col items-center gap-1 py-2.5 px-3 rounded-xl text-xs font-semibold transition-all duration-200
+                text-blue-600/70 dark:text-blue-300/60
+                data-active:bg-gradient-to-br data-active:from-blue-500 data-active:to-blue-600
+                data-active:text-white data-active:shadow-lg data-active:shadow-blue-500/30
+                data-active:scale-[1.03]
+                hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:text-blue-700 dark:hover:text-blue-200"
+            >
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/50 group-data-active:bg-white/20 transition-colors">
+                <Dices className="h-4 w-4" />
+              </div>
               번호 생성
             </TabsTrigger>
-            <TabsTrigger value="favorites" className="flex items-center gap-1.5">
-              <Star className="h-4 w-4" />
+            <TabsTrigger
+              value="favorites"
+              className="group flex flex-col items-center gap-1 py-2.5 px-3 rounded-xl text-xs font-semibold transition-all duration-200
+                text-yellow-600/70 dark:text-yellow-300/60
+                data-active:bg-gradient-to-br data-active:from-yellow-400 data-active:to-orange-500
+                data-active:text-white data-active:shadow-lg data-active:shadow-yellow-500/30
+                data-active:scale-[1.03]
+                hover:bg-yellow-50 dark:hover:bg-yellow-900/40 hover:text-yellow-700 dark:hover:text-yellow-200"
+            >
+              <div className="relative flex items-center justify-center w-8 h-8 rounded-full bg-yellow-100 dark:bg-yellow-900/50 group-data-active:bg-white/20 transition-colors">
+                <Star className="h-4 w-4" />
+                {favoriteGames.length > 0 && (
+                  <span className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 rounded-full bg-orange-500 group-data-active:bg-white group-data-active:text-orange-500 text-white text-[9px] font-bold leading-none shadow">
+                    {favoriteGames.length}
+                  </span>
+                )}
+              </div>
               즐겨찾기
-              {favoriteGames.length > 0 && (
-                <Badge variant="secondary" className="ml-1 h-4 px-1 text-xs">
-                  {favoriteGames.length}
-                </Badge>
-              )}
             </TabsTrigger>
-            <TabsTrigger value="stats" className="flex items-center gap-1.5">
-              <BarChart3 className="h-4 w-4" />
+            <TabsTrigger
+              value="stats"
+              className="group flex flex-col items-center gap-1 py-2.5 px-3 rounded-xl text-xs font-semibold transition-all duration-200
+                text-purple-600/70 dark:text-purple-300/60
+                data-active:bg-gradient-to-br data-active:from-purple-500 data-active:to-violet-600
+                data-active:text-white data-active:shadow-lg data-active:shadow-purple-500/30
+                data-active:scale-[1.03]
+                hover:bg-purple-50 dark:hover:bg-purple-900/40 hover:text-purple-700 dark:hover:text-purple-200"
+            >
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900/50 group-data-active:bg-white/20 transition-colors">
+                <BarChart3 className="h-4 w-4" />
+              </div>
               통계
             </TabsTrigger>
           </TabsList>
