@@ -92,53 +92,61 @@ export function LottoApp() {
         </div>
 
         <Tabs defaultValue="generate" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3 h-auto p-1.5 bg-gradient-to-r from-blue-100 via-purple-50 to-yellow-100 dark:from-blue-950 dark:via-purple-950 dark:to-yellow-950 rounded-2xl shadow-inner gap-1.5">
+          <TabsList className="grid w-full grid-cols-3 h-auto p-1.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm gap-1.5">
             <TabsTrigger
               value="generate"
-              className="group flex flex-col items-center gap-1 py-2.5 px-3 rounded-xl text-xs font-semibold transition-all duration-200
-                text-blue-600/70 dark:text-blue-300/60
-                data-active:bg-gradient-to-br data-active:from-blue-500 data-active:to-blue-600
-                data-active:text-white data-active:shadow-lg data-active:shadow-blue-500/30
-                data-active:scale-[1.03]
-                hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:text-blue-700 dark:hover:text-blue-200"
+              className="group relative flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl text-xs font-semibold transition-all duration-200
+                text-gray-400 dark:text-gray-500
+                data-active:bg-gradient-to-br data-active:from-blue-500 data-active:to-indigo-600
+                data-active:text-white data-active:shadow-md data-active:shadow-blue-400/40
+                hover:text-blue-600 hover:bg-blue-50 dark:hover:text-blue-400 dark:hover:bg-blue-950/40"
             >
-              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/50 group-data-active:bg-white/20 transition-colors">
-                <Dices className="h-4 w-4" />
-              </div>
-              번호 생성
+              <span className="flex items-center justify-center w-9 h-9 rounded-full
+                bg-gray-100 dark:bg-gray-800
+                group-data-active:bg-white/20
+                transition-colors duration-200">
+                <Dices className="h-[18px] w-[18px]" />
+              </span>
+              <span>번호 생성</span>
             </TabsTrigger>
             <TabsTrigger
               value="favorites"
-              className="group flex flex-col items-center gap-1 py-2.5 px-3 rounded-xl text-xs font-semibold transition-all duration-200
-                text-yellow-600/70 dark:text-yellow-300/60
-                data-active:bg-gradient-to-br data-active:from-yellow-400 data-active:to-orange-500
-                data-active:text-white data-active:shadow-lg data-active:shadow-yellow-500/30
-                data-active:scale-[1.03]
-                hover:bg-yellow-50 dark:hover:bg-yellow-900/40 hover:text-yellow-700 dark:hover:text-yellow-200"
+              className="group relative flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl text-xs font-semibold transition-all duration-200
+                text-gray-400 dark:text-gray-500
+                data-active:bg-gradient-to-br data-active:from-amber-400 data-active:to-orange-500
+                data-active:text-white data-active:shadow-md data-active:shadow-amber-400/40
+                hover:text-amber-600 hover:bg-amber-50 dark:hover:text-amber-400 dark:hover:bg-amber-950/40"
             >
-              <div className="relative flex items-center justify-center w-8 h-8 rounded-full bg-yellow-100 dark:bg-yellow-900/50 group-data-active:bg-white/20 transition-colors">
-                <Star className="h-4 w-4" />
+              <span className="relative flex items-center justify-center w-9 h-9 rounded-full
+                bg-gray-100 dark:bg-gray-800
+                group-data-active:bg-white/20
+                transition-colors duration-200">
+                <Star className="h-[18px] w-[18px]" />
                 {favoriteGames.length > 0 && (
-                  <span className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 rounded-full bg-orange-500 group-data-active:bg-white group-data-active:text-orange-500 text-white text-[9px] font-bold leading-none shadow">
+                  <span className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 rounded-full
+                    bg-orange-500 group-data-active:bg-white group-data-active:text-orange-500
+                    text-white text-[9px] font-bold leading-none shadow">
                     {favoriteGames.length}
                   </span>
                 )}
-              </div>
-              즐겨찾기
+              </span>
+              <span>즐겨찾기</span>
             </TabsTrigger>
             <TabsTrigger
               value="stats"
-              className="group flex flex-col items-center gap-1 py-2.5 px-3 rounded-xl text-xs font-semibold transition-all duration-200
-                text-purple-600/70 dark:text-purple-300/60
-                data-active:bg-gradient-to-br data-active:from-purple-500 data-active:to-violet-600
-                data-active:text-white data-active:shadow-lg data-active:shadow-purple-500/30
-                data-active:scale-[1.03]
-                hover:bg-purple-50 dark:hover:bg-purple-900/40 hover:text-purple-700 dark:hover:text-purple-200"
+              className="group relative flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl text-xs font-semibold transition-all duration-200
+                text-gray-400 dark:text-gray-500
+                data-active:bg-gradient-to-br data-active:from-violet-500 data-active:to-purple-600
+                data-active:text-white data-active:shadow-md data-active:shadow-violet-400/40
+                hover:text-violet-600 hover:bg-violet-50 dark:hover:text-violet-400 dark:hover:bg-violet-950/40"
             >
-              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900/50 group-data-active:bg-white/20 transition-colors">
-                <BarChart3 className="h-4 w-4" />
-              </div>
-              통계
+              <span className="flex items-center justify-center w-9 h-9 rounded-full
+                bg-gray-100 dark:bg-gray-800
+                group-data-active:bg-white/20
+                transition-colors duration-200">
+                <BarChart3 className="h-[18px] w-[18px]" />
+              </span>
+              <span>통계</span>
             </TabsTrigger>
           </TabsList>
 
