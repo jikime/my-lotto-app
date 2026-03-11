@@ -16,11 +16,37 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Dices, Plus, Star, Trash2, BarChart3 } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 const DEFAULT_GAME_COUNT = 5;
+const TAB_ORDER = ["generate", "favorites", "stats"] as const;
+type TabValue = (typeof TAB_ORDER)[number];
+
+// Gradient pill indicator positions for 3 equal columns (container p-1.5 = 6px, gap-1 = 4px)
+const SLIDER_LEFT: Record<TabValue, string> = {
+  generate: "6px",
+  favorites: "calc(6px + (100% - 20px) / 3 + 4px)",
+  stats: "calc(6px + (100% - 20px) * 2 / 3 + 8px)",
+};
+const SLIDER_WIDTH = "calc((100% - 20px) / 3)";
+
+const PILL_GRADIENT: Record<TabValue, string> = {
+  generate: "bg-gradient-to-r from-blue-400 via-blue-500 to-indigo-600",
+  favorites: "bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500",
+  stats: "bg-gradient-to-r from-violet-400 via-violet-500 to-purple-700",
+};
+
+const PILL_GLOW_CLASS: Record<TabValue, string> = {
+  generate: "tab-pill-generate",
+  favorites: "tab-pill-favorites",
+  stats: "tab-pill-stats",
+};
 
 export function LottoApp() {
   const [games, setGames] = useState<LottoGame[]>([]);
+  const [activeTab, setActiveTab] = useState<TabValue>("generate");
+  const [slideDirection, setSlideDirection] = useState<"right" | "left">("right");
+  const [clickedTab, setClickedTab] = useState<TabValue | null>(null);
 
   useEffect(() => {
     setGames(generateMultipleGames(DEFAULT_GAME_COUNT));
@@ -74,8 +100,28 @@ export function LottoApp() {
     toast.info("초기화되었습니다.");
   }, []);
 
+  const handleTabChange = useCallback(
+    (newTab: string) => {
+      const tab = newTab as TabValue;
+      const prevIdx = TAB_ORDER.indexOf(activeTab);
+      const newIdx = TAB_ORDER.indexOf(tab);
+      setSlideDirection(newIdx > prevIdx ? "right" : "left");
+      setClickedTab(tab);
+      setActiveTab(tab);
+      setTimeout(() => setClickedTab(null), 200);
+    },
+    [activeTab]
+  );
+
   const favoriteGames = games.filter((g) => g.isFavorite);
   const frequencies = calculateFrequency(games);
+
+  const tabTriggerBase = cn(
+    "group relative z-10 flex items-center justify-center gap-2 py-3.5 px-3 rounded-xl",
+    "text-sm font-semibold cursor-pointer border-0 outline-none select-none",
+    "transition-all duration-200 ease-out active:scale-95",
+    "text-gray-500 dark:text-gray-400"
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-yellow-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
@@ -86,104 +132,115 @@ export function LottoApp() {
             <Dices className="h-8 w-8 text-primary" />
             <h1 className="text-3xl font-bold tracking-tight">로또 6/45</h1>
           </div>
-          <p className="text-muted-foreground">
-            행운의 번호를 생성하세요 ✨
-          </p>
+          <p className="text-muted-foreground">행운의 번호를 생성하세요 ✨</p>
         </div>
 
-        <Tabs defaultValue="generate" className="space-y-6">
+        <Tabs
+          value={activeTab}
+          onValueChange={handleTabChange}
+          data-direction={slideDirection}
+          className="space-y-6"
+        >
           {/* Tab Navigation */}
-          <div className="relative rounded-3xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/60 dark:border-gray-700/60 shadow-xl shadow-black/5 p-2">
-            {/* Decorative gradient bar at top */}
-            <div className="absolute inset-x-0 top-0 h-0.5 rounded-t-3xl bg-gradient-to-r from-blue-400 via-amber-400 to-violet-400 opacity-60" />
+          <div className="relative rounded-2xl bg-gray-100/90 dark:bg-gray-800/70 backdrop-blur-sm p-1.5 shadow-inner border border-gray-200/50 dark:border-gray-700/50">
+            {/* Gradient sliding pill indicator */}
+            <div
+              className={cn(
+                "absolute top-1.5 bottom-1.5 rounded-xl pointer-events-none",
+                "transition-[left,width] duration-[320ms] ease-[cubic-bezier(0.34,1.56,0.64,1)]",
+                PILL_GRADIENT[activeTab],
+                PILL_GLOW_CLASS[activeTab],
+                /* shimmer overlay */
+                "after:absolute after:inset-0 after:rounded-xl after:opacity-0 hover:after:opacity-100",
+                "after:bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.18)_50%,transparent_100%)]",
+                "after:bg-[length:200%_100%] after:[animation:shimmerSweep_1.8s_linear_infinite]"
+              )}
+              style={{
+                width: SLIDER_WIDTH,
+                left: SLIDER_LEFT[activeTab],
+              }}
+            />
 
-            <TabsList className="grid w-full grid-cols-3 h-auto p-0 bg-transparent border-0 shadow-none gap-2">
+            <TabsList className="relative grid w-full grid-cols-3 h-auto p-0 bg-transparent border-0 shadow-none gap-1">
               {/* 번호 생성 Tab */}
               <TabsTrigger
                 value="generate"
-                className="group relative flex flex-col items-center gap-2 py-4 px-3 rounded-2xl border-0 outline-none transition-all duration-300 cursor-pointer
-                  text-gray-400 dark:text-gray-500
-                  hover:text-blue-500 dark:hover:text-blue-400
-                  data-active:text-white
-                  data-active:bg-gradient-to-br data-active:from-blue-400 data-active:via-blue-500 data-active:to-indigo-600
-                  data-active:shadow-lg data-active:shadow-blue-500/30
-                  hover:bg-blue-50/80 dark:hover:bg-blue-950/30"
+                className={cn(
+                  tabTriggerBase,
+                  "hover:text-blue-600 dark:hover:text-blue-400",
+                  "data-active:text-white",
+                  clickedTab === "generate" && "tab-trigger-press"
+                )}
               >
-                {/* Glow effect for active state */}
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-400 to-indigo-600 opacity-0 group-data-active:opacity-20 blur-lg transition-opacity duration-300" />
-
-                <div className="relative flex items-center justify-center w-12 h-12 rounded-2xl transition-all duration-300
-                  bg-blue-100/80 dark:bg-blue-900/30
-                  group-data-active:bg-white/20 dark:group-data-active:bg-white/10
-                  group-hover:scale-110 group-data-active:scale-105
-                  shadow-sm group-data-active:shadow-none">
-                  <Dices className="h-6 w-6 text-blue-500 group-data-active:text-white transition-colors duration-200 drop-shadow-sm" />
-                </div>
-                <div className="relative flex flex-col items-center gap-0.5">
-                  <span className="text-[11px] font-extrabold tracking-widest uppercase">번호</span>
-                  <span className="text-[10px] font-medium opacity-70">생성</span>
-                </div>
+                <Dices className={cn(
+                  "h-5 w-5 shrink-0 transition-all duration-300",
+                  "group-hover:rotate-12 group-hover:scale-110",
+                  "group-data-active:rotate-[-12deg] group-data-active:drop-shadow-[0_0_6px_rgba(255,255,255,0.6)]"
+                )} />
+                <span>번호 생성</span>
+                <span
+                  className={cn(
+                    "inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full",
+                    "text-[10px] font-bold transition-all duration-300",
+                    "bg-gray-200/80 dark:bg-gray-600 text-gray-600 dark:text-gray-300",
+                    "group-data-active:bg-white/25 group-data-active:text-white",
+                    "group-data-active:scale-110"
+                  )}
+                >
+                  {games.length}
+                </span>
               </TabsTrigger>
 
               {/* 즐겨찾기 Tab */}
               <TabsTrigger
                 value="favorites"
-                className="group relative flex flex-col items-center gap-2 py-4 px-3 rounded-2xl border-0 outline-none transition-all duration-300 cursor-pointer
-                  text-gray-400 dark:text-gray-500
-                  hover:text-amber-500 dark:hover:text-amber-400
-                  data-active:text-white
-                  data-active:bg-gradient-to-br data-active:from-amber-400 data-active:via-orange-500 data-active:to-rose-500
-                  data-active:shadow-lg data-active:shadow-orange-500/30
-                  hover:bg-amber-50/80 dark:hover:bg-amber-950/30"
+                className={cn(
+                  tabTriggerBase,
+                  "hover:text-amber-600 dark:hover:text-amber-400",
+                  "data-active:text-white",
+                  clickedTab === "favorites" && "tab-trigger-press"
+                )}
               >
-                {/* Glow effect for active state */}
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-amber-400 to-rose-500 opacity-0 group-data-active:opacity-20 blur-lg transition-opacity duration-300" />
-
-                <div className="relative flex items-center justify-center w-12 h-12 rounded-2xl transition-all duration-300
-                  bg-amber-100/80 dark:bg-amber-900/30
-                  group-data-active:bg-white/20 dark:group-data-active:bg-white/10
-                  group-hover:scale-110 group-data-active:scale-105
-                  shadow-sm group-data-active:shadow-none">
-                  <Star className="h-6 w-6 text-amber-500 group-data-active:text-white transition-colors duration-200 drop-shadow-sm" />
-                  {favoriteGames.length > 0 && (
-                    <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[20px] h-[20px] px-1 rounded-full
-                      bg-rose-500 group-data-active:bg-white group-data-active:text-rose-500
-                      text-white text-[9px] font-extrabold shadow-lg border-2 border-white dark:border-gray-900 transition-colors duration-200">
-                      {favoriteGames.length}
-                    </span>
+                <Star
+                  className={cn(
+                    "h-5 w-5 shrink-0 transition-all duration-300",
+                    "group-hover:scale-125 group-hover:rotate-12",
+                    "group-data-active:fill-white group-data-active:text-white group-data-active:scale-110",
+                    "group-data-active:drop-shadow-[0_0_6px_rgba(255,255,255,0.6)]"
                   )}
-                </div>
-                <div className="relative flex flex-col items-center gap-0.5">
-                  <span className="text-[11px] font-extrabold tracking-widest uppercase">즐겨</span>
-                  <span className="text-[10px] font-medium opacity-70">찾기</span>
-                </div>
+                />
+                <span>즐겨찾기</span>
+                {favoriteGames.length > 0 && (
+                  <span
+                    className={cn(
+                      "inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full",
+                      "text-[10px] font-bold transition-all duration-300",
+                      "bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300",
+                      "group-data-active:bg-white/25 group-data-active:text-white",
+                      "group-data-active:scale-110"
+                    )}
+                  >
+                    {favoriteGames.length}
+                  </span>
+                )}
               </TabsTrigger>
 
-              {/* 통계 Tab */}
+              {/* 번호 통계 Tab */}
               <TabsTrigger
                 value="stats"
-                className="group relative flex flex-col items-center gap-2 py-4 px-3 rounded-2xl border-0 outline-none transition-all duration-300 cursor-pointer
-                  text-gray-400 dark:text-gray-500
-                  hover:text-violet-500 dark:hover:text-violet-400
-                  data-active:text-white
-                  data-active:bg-gradient-to-br data-active:from-violet-400 data-active:via-violet-500 data-active:to-purple-700
-                  data-active:shadow-lg data-active:shadow-violet-500/30
-                  hover:bg-violet-50/80 dark:hover:bg-violet-950/30"
+                className={cn(
+                  tabTriggerBase,
+                  "hover:text-violet-600 dark:hover:text-violet-400",
+                  "data-active:text-white",
+                  clickedTab === "stats" && "tab-trigger-press"
+                )}
               >
-                {/* Glow effect for active state */}
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-violet-400 to-purple-700 opacity-0 group-data-active:opacity-20 blur-lg transition-opacity duration-300" />
-
-                <div className="relative flex items-center justify-center w-12 h-12 rounded-2xl transition-all duration-300
-                  bg-violet-100/80 dark:bg-violet-900/30
-                  group-data-active:bg-white/20 dark:group-data-active:bg-white/10
-                  group-hover:scale-110 group-data-active:scale-105
-                  shadow-sm group-data-active:shadow-none">
-                  <BarChart3 className="h-6 w-6 text-violet-500 group-data-active:text-white transition-colors duration-200 drop-shadow-sm" />
-                </div>
-                <div className="relative flex flex-col items-center gap-0.5">
-                  <span className="text-[11px] font-extrabold tracking-widest uppercase">번호</span>
-                  <span className="text-[10px] font-medium opacity-70">통계</span>
-                </div>
+                <BarChart3 className={cn(
+                  "h-5 w-5 shrink-0 transition-all duration-300",
+                  "group-hover:scale-125",
+                  "group-data-active:scale-110 group-data-active:drop-shadow-[0_0_6px_rgba(255,255,255,0.6)]"
+                )} />
+                <span>번호 통계</span>
               </TabsTrigger>
             </TabsList>
           </div>
@@ -209,11 +266,7 @@ export function LottoApp() {
                       <Trash2 className="h-3.5 w-3.5 mr-1" />
                       초기화
                     </Button>
-                    <Button
-                      size="sm"
-                      onClick={handleGenerateAll}
-                      className="h-8"
-                    >
+                    <Button size="sm" onClick={handleGenerateAll} className="h-8">
                       <Dices className="h-3.5 w-3.5 mr-1" />
                       전체 재생성
                     </Button>
@@ -258,7 +311,9 @@ export function LottoApp() {
                   ].map(({ range, color, label }) => (
                     <div key={range} className="flex items-center gap-1.5">
                       <div className={`w-4 h-4 rounded-full border-2 ${color}`} />
-                      <span className="text-muted-foreground">{range} ({label})</span>
+                      <span className="text-muted-foreground">
+                        {range} ({label})
+                      </span>
                     </div>
                   ))}
                 </div>
