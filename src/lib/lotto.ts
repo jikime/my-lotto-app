@@ -50,6 +50,5 @@ export function calculateFrequency(games: LottoGame[]): NumberFrequency[] {
 }
 
 export function formatGameLabel(index: number): string {
-  const labels = ["가", "나", "다", "라", "마", "바", "사", "아", "자", "차"];
-  return labels[index] || String(index + 1);
+  return String(index + 1);
 }
