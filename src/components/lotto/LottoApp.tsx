@@ -91,64 +91,87 @@ export function LottoApp() {
           </p>
         </div>
 
-        <Tabs defaultValue="generate" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3 h-auto p-1.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm gap-1.5">
-            <TabsTrigger
-              value="generate"
-              className="group relative flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl text-xs font-semibold transition-all duration-200
-                text-gray-400 dark:text-gray-500
-                data-active:bg-gradient-to-br data-active:from-blue-500 data-active:to-indigo-600
-                data-active:text-white data-active:shadow-md data-active:shadow-blue-400/40
-                hover:text-blue-600 hover:bg-blue-50 dark:hover:text-blue-400 dark:hover:bg-blue-950/40"
-            >
-              <span className="flex items-center justify-center w-9 h-9 rounded-full
-                bg-gray-100 dark:bg-gray-800
-                group-data-active:bg-white/20
-                transition-colors duration-200">
-                <Dices className="h-[18px] w-[18px]" />
-              </span>
-              <span>번호 생성</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="favorites"
-              className="group relative flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl text-xs font-semibold transition-all duration-200
-                text-gray-400 dark:text-gray-500
-                data-active:bg-gradient-to-br data-active:from-amber-400 data-active:to-orange-500
-                data-active:text-white data-active:shadow-md data-active:shadow-amber-400/40
-                hover:text-amber-600 hover:bg-amber-50 dark:hover:text-amber-400 dark:hover:bg-amber-950/40"
-            >
-              <span className="relative flex items-center justify-center w-9 h-9 rounded-full
-                bg-gray-100 dark:bg-gray-800
-                group-data-active:bg-white/20
-                transition-colors duration-200">
-                <Star className="h-[18px] w-[18px]" />
-                {favoriteGames.length > 0 && (
-                  <span className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 rounded-full
-                    bg-orange-500 group-data-active:bg-white group-data-active:text-orange-500
-                    text-white text-[9px] font-bold leading-none shadow">
-                    {favoriteGames.length}
-                  </span>
-                )}
-              </span>
-              <span>즐겨찾기</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="stats"
-              className="group relative flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl text-xs font-semibold transition-all duration-200
-                text-gray-400 dark:text-gray-500
-                data-active:bg-gradient-to-br data-active:from-violet-500 data-active:to-purple-600
-                data-active:text-white data-active:shadow-md data-active:shadow-violet-400/40
-                hover:text-violet-600 hover:bg-violet-50 dark:hover:text-violet-400 dark:hover:bg-violet-950/40"
-            >
-              <span className="flex items-center justify-center w-9 h-9 rounded-full
-                bg-gray-100 dark:bg-gray-800
-                group-data-active:bg-white/20
-                transition-colors duration-200">
-                <BarChart3 className="h-[18px] w-[18px]" />
-              </span>
-              <span>통계</span>
-            </TabsTrigger>
-          </TabsList>
+        <Tabs defaultValue="generate" className="space-y-6">
+          {/* Beautiful Tab Navigation */}
+          <div className="relative">
+            <TabsList className="grid w-full grid-cols-3 h-auto p-0 bg-transparent border-0 shadow-none gap-3">
+              {/* 번호 생성 Tab */}
+              <TabsTrigger
+                value="generate"
+                className="group relative flex flex-col items-center gap-2 py-4 px-3 rounded-2xl border-0 outline-none transition-all duration-300
+                  bg-white dark:bg-gray-800/60
+                  text-gray-400 dark:text-gray-500
+                  shadow-sm hover:shadow-md
+                  data-active:bg-gradient-to-b data-active:from-blue-500 data-active:to-blue-700
+                  data-active:text-white data-active:shadow-lg data-active:shadow-blue-500/40
+                  dark:data-active:from-blue-600 dark:data-active:to-blue-800
+                  hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 dark:hover:text-blue-400
+                  border border-gray-100/80 dark:border-gray-700/50
+                  data-active:border-blue-400/30"
+              >
+                <div className="flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-300
+                  bg-blue-50 dark:bg-blue-900/40
+                  group-data-active:bg-white/20 dark:group-data-active:bg-white/15
+                  group-hover:scale-110 group-data-active:scale-110">
+                  <Dices className="h-5 w-5 text-blue-500 group-data-active:text-white transition-colors duration-200" />
+                </div>
+                <span className="text-[11px] font-bold tracking-wide">번호 생성</span>
+              </TabsTrigger>
+
+              {/* 즐겨찾기 Tab */}
+              <TabsTrigger
+                value="favorites"
+                className="group relative flex flex-col items-center gap-2 py-4 px-3 rounded-2xl border-0 outline-none transition-all duration-300
+                  bg-white dark:bg-gray-800/60
+                  text-gray-400 dark:text-gray-500
+                  shadow-sm hover:shadow-md
+                  data-active:bg-gradient-to-b data-active:from-amber-400 data-active:to-orange-600
+                  data-active:text-white data-active:shadow-lg data-active:shadow-amber-400/40
+                  dark:data-active:from-amber-500 dark:data-active:to-orange-700
+                  hover:bg-amber-50 dark:hover:bg-amber-900/30 hover:text-amber-600 dark:hover:text-amber-400
+                  border border-gray-100/80 dark:border-gray-700/50
+                  data-active:border-amber-400/30"
+              >
+                <div className="relative flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-300
+                  bg-amber-50 dark:bg-amber-900/40
+                  group-data-active:bg-white/20 dark:group-data-active:bg-white/15
+                  group-hover:scale-110 group-data-active:scale-110">
+                  <Star className="h-5 w-5 text-amber-500 group-data-active:text-white transition-colors duration-200" />
+                  {favoriteGames.length > 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full
+                      bg-orange-500 group-data-active:bg-white group-data-active:text-orange-600
+                      text-white text-[9px] font-extrabold shadow-md border border-white dark:border-gray-800">
+                      {favoriteGames.length}
+                    </span>
+                  )}
+                </div>
+                <span className="text-[11px] font-bold tracking-wide">즐겨찾기</span>
+              </TabsTrigger>
+
+              {/* 통계 Tab */}
+              <TabsTrigger
+                value="stats"
+                className="group relative flex flex-col items-center gap-2 py-4 px-3 rounded-2xl border-0 outline-none transition-all duration-300
+                  bg-white dark:bg-gray-800/60
+                  text-gray-400 dark:text-gray-500
+                  shadow-sm hover:shadow-md
+                  data-active:bg-gradient-to-b data-active:from-violet-500 data-active:to-purple-700
+                  data-active:text-white data-active:shadow-lg data-active:shadow-violet-500/40
+                  dark:data-active:from-violet-600 dark:data-active:to-purple-800
+                  hover:bg-violet-50 dark:hover:bg-violet-900/30 hover:text-violet-600 dark:hover:text-violet-400
+                  border border-gray-100/80 dark:border-gray-700/50
+                  data-active:border-violet-400/30"
+              >
+                <div className="flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-300
+                  bg-violet-50 dark:bg-violet-900/40
+                  group-data-active:bg-white/20 dark:group-data-active:bg-white/15
+                  group-hover:scale-110 group-data-active:scale-110">
+                  <BarChart3 className="h-5 w-5 text-violet-500 group-data-active:text-white transition-colors duration-200" />
+                </div>
+                <span className="text-[11px] font-bold tracking-wide">통계</span>
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           {/* Generate Tab */}
           <TabsContent value="generate" className="space-y-4">
