@@ -5,7 +5,7 @@ import { formatGameLabel } from "@/lib/lotto";
 import { LottoBall } from "./LottoBall";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Star, RefreshCw, Trash2 } from "lucide-react";
+import { Star, RefreshCw, Trash2, Bookmark } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface LottoGameCardProps {
@@ -14,6 +14,7 @@ interface LottoGameCardProps {
   onToggleFavorite: (id: string) => void;
   onRegenerate: (id: string) => void;
   onDelete: (id: string) => void;
+  onSave?: (id: string) => void;
 }
 
 export function LottoGameCard({
@@ -22,6 +23,7 @@ export function LottoGameCard({
   onToggleFavorite,
   onRegenerate,
   onDelete,
+  onSave,
 }: LottoGameCardProps) {
   return (
     <Card className={cn("transition-all duration-200", game.isFavorite && "ring-2 ring-yellow-400")}>
@@ -36,6 +38,17 @@ export function LottoGameCard({
             ))}
           </div>
           <div className="flex items-center gap-1 shrink-0">
+            {onSave && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-blue-500 hover:text-blue-600"
+                onClick={() => onSave(game.id)}
+                title="히스토리에 저장"
+              >
+                <Bookmark className="h-4 w-4" />
+              </Button>
+            )}
             <Button
               variant="ghost"
               size="icon"
