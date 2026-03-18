@@ -25,32 +25,20 @@ type TabValue = (typeof TAB_ORDER)[number];
 
 const LOTTO_HISTORY_KEY = "lotto-history";
 
-// Gradient pill indicator positions for 3 equal columns (container p-1.5 = 6px, gap-1 = 4px)
+// Pill indicator positions for 3 equal columns (container p-1 = 4px, gap-1 = 4px)
 const SLIDER_LEFT: Record<TabValue, string> = {
-  generate: "6px",
-  favorites: "calc(6px + (100% - 20px) / 3 + 4px)",
-  stats: "calc(6px + (100% - 20px) * 2 / 3 + 8px)",
+  generate: "4px",
+  favorites: "calc(4px + (100% - 16px) / 3 + 4px)",
+  stats: "calc(4px + (100% - 16px) * 2 / 3 + 8px)",
 };
-const SLIDER_WIDTH = "calc((100% - 20px) / 3)";
+const SLIDER_WIDTH = "calc((100% - 16px) / 3)";
 
-const PILL_GRADIENT: Record<TabValue, string> = {
-  generate: "bg-gradient-to-r from-blue-400 via-blue-500 to-indigo-600",
-  favorites: "bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500",
-  stats: "bg-gradient-to-r from-violet-400 via-violet-500 to-purple-700",
-};
-
-const PILL_GLOW_CLASS: Record<TabValue, string> = {
-  generate: "tab-pill-generate",
-  favorites: "tab-pill-favorites",
-  stats: "tab-pill-stats",
-};
 
 export function LottoApp() {
   const [games, setGames] = useState<LottoGame[]>([]);
   const [savedHistory, setSavedHistory] = useState<SavedLottoGame[]>([]);
   const [activeTab, setActiveTab] = useState<TabValue>("generate");
   const [slideDirection, setSlideDirection] = useState<"right" | "left">("right");
-  const [clickedTab, setClickedTab] = useState<TabValue | null>(null);
 
   useEffect(() => {
     setGames(generateMultipleGames(DEFAULT_GAME_COUNT));
@@ -152,9 +140,7 @@ export function LottoApp() {
       const prevIdx = TAB_ORDER.indexOf(activeTab);
       const newIdx = TAB_ORDER.indexOf(tab);
       setSlideDirection(newIdx > prevIdx ? "right" : "left");
-      setClickedTab(tab);
       setActiveTab(tab);
-      setTimeout(() => setClickedTab(null), 200);
     },
     [activeTab]
   );
@@ -163,10 +149,12 @@ export function LottoApp() {
   const frequencies = calculateFrequency(games);
 
   const tabTriggerBase = cn(
-    "group relative z-10 flex items-center justify-center gap-2 py-3.5 px-3 rounded-xl",
-    "text-sm font-semibold cursor-pointer border-0 outline-none select-none",
-    "transition-all duration-200 ease-out active:scale-95",
-    "text-gray-500 dark:text-gray-400"
+    "relative z-10 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg",
+    "text-sm font-medium cursor-pointer border-0 outline-none select-none",
+    "transition-colors duration-200",
+    "text-gray-500 dark:text-gray-400",
+    "hover:text-gray-800 dark:hover:text-gray-200",
+    "data-active:text-gray-900 dark:data-active:text-gray-100"
   );
 
   return (
@@ -199,18 +187,12 @@ export function LottoApp() {
               className="space-y-6"
             >
               {/* Tab Navigation */}
-              <div className="relative rounded-2xl bg-gray-100/90 dark:bg-gray-800/70 backdrop-blur-sm p-1.5 shadow-inner border border-gray-200/50 dark:border-gray-700/50">
-                {/* Gradient sliding pill indicator */}
+              <div className="relative rounded-xl bg-gray-100 dark:bg-gray-800/80 p-1">
+                {/* Simple white sliding pill indicator */}
                 <div
                   className={cn(
-                    "absolute top-1.5 bottom-1.5 rounded-xl pointer-events-none",
-                    "transition-[left,width] duration-[320ms] ease-[cubic-bezier(0.34,1.56,0.64,1)]",
-                    PILL_GRADIENT[activeTab],
-                    PILL_GLOW_CLASS[activeTab],
-                    /* shimmer overlay */
-                    "after:absolute after:inset-0 after:rounded-xl after:opacity-0 hover:after:opacity-100",
-                    "after:bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.18)_50%,transparent_100%)]",
-                    "after:bg-[length:200%_100%] after:[animation:shimmerSweep_1.8s_linear_infinite]"
+                    "absolute top-1 bottom-1 rounded-lg bg-white dark:bg-gray-700 shadow-sm pointer-events-none",
+                    "transition-[left,width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
                   )}
                   style={{
                     width: SLIDER_WIDTH,
@@ -222,26 +204,15 @@ export function LottoApp() {
                   {/* 번호 생성 Tab */}
                   <TabsTrigger
                     value="generate"
-                    className={cn(
-                      tabTriggerBase,
-                      "hover:text-blue-600 dark:hover:text-blue-400",
-                      "data-active:text-white",
-                      clickedTab === "generate" && "tab-trigger-press"
-                    )}
+                    className={tabTriggerBase}
                   >
-                    <Dices className={cn(
-                      "h-5 w-5 shrink-0 transition-all duration-300",
-                      "group-hover:rotate-12 group-hover:scale-110",
-                      "group-data-active:rotate-[-12deg] group-data-active:drop-shadow-[0_0_6px_rgba(255,255,255,0.6)]"
-                    )} />
+                    <Dices className="h-4 w-4 shrink-0" />
                     <span>번호 생성</span>
                     <span
                       className={cn(
-                        "inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full",
-                        "text-[10px] font-bold transition-all duration-300",
-                        "bg-gray-200/80 dark:bg-gray-600 text-gray-600 dark:text-gray-300",
-                        "group-data-active:bg-white/25 group-data-active:text-white",
-                        "group-data-active:scale-110"
+                        "inline-flex items-center justify-center min-w-[18px] h-5 px-1.5 rounded-full",
+                        "text-[10px] font-medium",
+                        "bg-gray-200 dark:bg-gray-600 text-gray-500 dark:text-gray-400"
                       )}
                     >
                       {games.length}
@@ -251,30 +222,16 @@ export function LottoApp() {
                   {/* 즐겨찾기 Tab */}
                   <TabsTrigger
                     value="favorites"
-                    className={cn(
-                      tabTriggerBase,
-                      "hover:text-amber-600 dark:hover:text-amber-400",
-                      "data-active:text-white",
-                      clickedTab === "favorites" && "tab-trigger-press"
-                    )}
+                    className={tabTriggerBase}
                   >
-                    <Star
-                      className={cn(
-                        "h-5 w-5 shrink-0 transition-all duration-300",
-                        "group-hover:scale-125 group-hover:rotate-12",
-                        "group-data-active:fill-white group-data-active:text-white group-data-active:scale-110",
-                        "group-data-active:drop-shadow-[0_0_6px_rgba(255,255,255,0.6)]"
-                      )}
-                    />
+                    <Star className="h-4 w-4 shrink-0" />
                     <span>즐겨찾기</span>
                     {favoriteGames.length > 0 && (
                       <span
                         className={cn(
-                          "inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full",
-                          "text-[10px] font-bold transition-all duration-300",
-                          "bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300",
-                          "group-data-active:bg-white/25 group-data-active:text-white",
-                          "group-data-active:scale-110"
+                          "inline-flex items-center justify-center min-w-[18px] h-5 px-1.5 rounded-full",
+                          "text-[10px] font-medium",
+                          "bg-gray-200 dark:bg-gray-600 text-gray-500 dark:text-gray-400"
                         )}
                       >
                         {favoriteGames.length}
@@ -285,18 +242,9 @@ export function LottoApp() {
                   {/* 번호 통계 Tab */}
                   <TabsTrigger
                     value="stats"
-                    className={cn(
-                      tabTriggerBase,
-                      "hover:text-violet-600 dark:hover:text-violet-400",
-                      "data-active:text-white",
-                      clickedTab === "stats" && "tab-trigger-press"
-                    )}
+                    className={tabTriggerBase}
                   >
-                    <BarChart3 className={cn(
-                      "h-5 w-5 shrink-0 transition-all duration-300",
-                      "group-hover:scale-125",
-                      "group-data-active:scale-110 group-data-active:drop-shadow-[0_0_6px_rgba(255,255,255,0.6)]"
-                    )} />
+                    <BarChart3 className="h-4 w-4 shrink-0" />
                     <span>번호 통계</span>
                   </TabsTrigger>
                 </TabsList>

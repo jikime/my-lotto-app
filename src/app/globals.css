@@ -174,45 +174,6 @@
   }
 }
 
-/* Active tab pill glow animation */
-@keyframes pillGlowBlue {
-  0%, 100% { box-shadow: 0 4px 20px -4px rgba(99, 102, 241, 0.5), 0 2px 8px -2px rgba(59, 130, 246, 0.4); }
-  50% { box-shadow: 0 6px 28px -4px rgba(99, 102, 241, 0.7), 0 3px 12px -2px rgba(59, 130, 246, 0.6); }
-}
-
-@keyframes pillGlowAmber {
-  0%, 100% { box-shadow: 0 4px 20px -4px rgba(251, 146, 60, 0.5), 0 2px 8px -2px rgba(245, 158, 11, 0.4); }
-  50% { box-shadow: 0 6px 28px -4px rgba(251, 146, 60, 0.7), 0 3px 12px -2px rgba(245, 158, 11, 0.6); }
-}
-
-@keyframes pillGlowViolet {
-  0%, 100% { box-shadow: 0 4px 20px -4px rgba(139, 92, 246, 0.5), 0 2px 8px -2px rgba(124, 58, 237, 0.4); }
-  50% { box-shadow: 0 6px 28px -4px rgba(139, 92, 246, 0.7), 0 3px 12px -2px rgba(124, 58, 237, 0.6); }
-}
-
-/* Shimmer sweep on active pill */
-@keyframes shimmerSweep {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
-}
-
-/* Tab trigger click ripple */
-@keyframes tabRipple {
-  0% { transform: scale(0.92); }
-  50% { transform: scale(1.04); }
-  100% { transform: scale(1); }
-}
-
-.tab-pill-generate {
-  animation: pillGlowBlue 2.5s ease-in-out infinite;
-}
-.tab-pill-favorites {
-  animation: pillGlowAmber 2.5s ease-in-out infinite;
-}
-.tab-pill-stats {
-  animation: pillGlowViolet 2.5s ease-in-out infinite;
-}
-
 [data-slot="tabs-content"]:not([hidden]) {
   animation: tabFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -223,9 +184,4 @@
 
 [data-direction="left"] [data-slot="tabs-content"]:not([hidden]) {
   animation: tabSlideInLeft 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Tab trigger press effect */
-.tab-trigger-press:active {
-  animation: tabRipple 0.2s ease-out forwards;
 }
