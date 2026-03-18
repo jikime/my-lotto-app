@@ -25,14 +25,6 @@ type TabValue = (typeof TAB_ORDER)[number];
 
 const LOTTO_HISTORY_KEY = "lotto-history";
 
-// Pill indicator positions for 3 equal columns (container p-1 = 4px, gap-1 = 4px)
-const SLIDER_LEFT: Record<TabValue, string> = {
-  generate: "4px",
-  favorites: "calc(4px + (100% - 16px) / 3 + 4px)",
-  stats: "calc(4px + (100% - 16px) * 2 / 3 + 8px)",
-};
-const SLIDER_WIDTH = "calc((100% - 16px) / 3)";
-
 
 export function LottoApp() {
   const [games, setGames] = useState<LottoGame[]>([]);
@@ -149,12 +141,15 @@ export function LottoApp() {
   const frequencies = calculateFrequency(games);
 
   const tabTriggerBase = cn(
-    "relative z-10 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg",
+    "relative flex items-center justify-center gap-1.5 py-3 px-3 rounded-none",
     "text-sm font-medium cursor-pointer border-0 outline-none select-none",
     "transition-colors duration-200",
-    "text-gray-500 dark:text-gray-400",
-    "hover:text-gray-800 dark:hover:text-gray-200",
-    "data-active:text-gray-900 dark:data-active:text-gray-100"
+    "text-muted-foreground",
+    "hover:text-foreground",
+    "data-active:text-primary",
+    "after:absolute after:bottom-0 after:inset-x-2 after:h-0.5 after:rounded-full",
+    "after:bg-transparent after:transition-colors after:duration-200",
+    "data-active:after:bg-primary"
   );
 
   return (
@@ -187,63 +182,30 @@ export function LottoApp() {
               className="space-y-6"
             >
               {/* Tab Navigation */}
-              <div className="relative rounded-xl bg-gray-100 dark:bg-gray-800/80 p-1">
-                {/* Simple white sliding pill indicator */}
-                <div
-                  className={cn(
-                    "absolute top-1 bottom-1 rounded-lg bg-white dark:bg-gray-700 shadow-sm pointer-events-none",
-                    "transition-[left,width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
-                  )}
-                  style={{
-                    width: SLIDER_WIDTH,
-                    left: SLIDER_LEFT[activeTab],
-                  }}
-                />
-
-                <TabsList className="relative grid w-full grid-cols-3 h-auto p-0 bg-transparent border-0 shadow-none gap-1">
+              <div className="border-b border-border">
+                <TabsList className="grid w-full grid-cols-3 h-auto p-0 bg-transparent border-0 shadow-none">
                   {/* 번호 생성 Tab */}
-                  <TabsTrigger
-                    value="generate"
-                    className={tabTriggerBase}
-                  >
+                  <TabsTrigger value="generate" className={tabTriggerBase}>
                     <Dices className="h-4 w-4 shrink-0" />
                     <span>번호 생성</span>
-                    <span
-                      className={cn(
-                        "inline-flex items-center justify-center min-w-[18px] h-5 px-1.5 rounded-full",
-                        "text-[10px] font-medium",
-                        "bg-gray-200 dark:bg-gray-600 text-gray-500 dark:text-gray-400"
-                      )}
-                    >
+                    <span className="text-xs tabular-nums text-muted-foreground/60">
                       {games.length}
                     </span>
                   </TabsTrigger>
 
                   {/* 즐겨찾기 Tab */}
-                  <TabsTrigger
-                    value="favorites"
-                    className={tabTriggerBase}
-                  >
+                  <TabsTrigger value="favorites" className={tabTriggerBase}>
                     <Star className="h-4 w-4 shrink-0" />
                     <span>즐겨찾기</span>
                     {favoriteGames.length > 0 && (
-                      <span
-                        className={cn(
-                          "inline-flex items-center justify-center min-w-[18px] h-5 px-1.5 rounded-full",
-                          "text-[10px] font-medium",
-                          "bg-gray-200 dark:bg-gray-600 text-gray-500 dark:text-gray-400"
-                        )}
-                      >
+                      <span className="text-xs tabular-nums text-muted-foreground/60">
                         {favoriteGames.length}
                       </span>
                     )}
                   </TabsTrigger>
 
                   {/* 번호 통계 Tab */}
-                  <TabsTrigger
-                    value="stats"
-                    className={tabTriggerBase}
-                  >
+                  <TabsTrigger value="stats" className={tabTriggerBase}>
                     <BarChart3 className="h-4 w-4 shrink-0" />
                     <span>번호 통계</span>
                   </TabsTrigger>
