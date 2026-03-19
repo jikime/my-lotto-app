@@ -1,14 +1,13 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { LottoGame, SavedLottoGame } from "@/types/lotto";
+import { LottoGame } from "@/types/lotto";
 import {
   generateLottoNumbers,
   generateMultipleGames,
   calculateFrequency,
 } from "@/lib/lotto";
 import { LottoGameCard } from "./LottoGameCard";
-import { LottoSidebar } from "./LottoSidebar";
 import { FrequencyChart } from "./FrequencyChart";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,8 +22,6 @@ const DEFAULT_GAME_COUNT = 5;
 const TAB_ORDER = ["generate", "favorites", "stats"] as const;
 type TabValue = (typeof TAB_ORDER)[number];
 
-const LOTTO_HISTORY_KEY = "lotto-history";
-
 // Pill indicator positions for 3 equal columns (container p-1 = 4px, gap-1 = 4px)
 const SLIDER_LEFT: Record<TabValue, string> = {
   generate: "4px",
@@ -36,32 +33,12 @@ const SLIDER_WIDTH = "calc((100% - 16px) / 3)";
 
 export function LottoApp() {
   const [games, setGames] = useState<LottoGame[]>([]);
-  const [savedHistory, setSavedHistory] = useState<SavedLottoGame[]>([]);
   const [activeTab, setActiveTab] = useState<TabValue>("generate");
   const [slideDirection, setSlideDirection] = useState<"right" | "left">("right");
 
   useEffect(() => {
     setGames(generateMultipleGames(DEFAULT_GAME_COUNT));
-
-    // Load history from localStorage
-    try {
-      const stored = localStorage.getItem(LOTTO_HISTORY_KEY);
-      if (stored) {
-        setSavedHistory(JSON.parse(stored));
-      }
-    } catch {
-      // ignore parse errors
-    }
   }, []);
-
-  // Sync history to localStorage whenever it changes
-  useEffect(() => {
-    try {
-      localStorage.setItem(LOTTO_HISTORY_KEY, JSON.stringify(savedHistory));
-    } catch {
-      // ignore storage errors
-    }
-  }, [savedHistory]);
 
   const handleGenerateAll = useCallback(() => {
     setGames(generateMultipleGames(DEFAULT_GAME_COUNT));
@@ -111,29 +88,6 @@ export function LottoApp() {
     toast.info("초기화되었습니다.");
   }, []);
 
-  const handleSaveToHistory = useCallback((id: string) => {
-    const game = games.find((g) => g.id === id);
-    if (!game) return;
-
-    const saved: SavedLottoGame = {
-      id: crypto.randomUUID(),
-      numbers: game.numbers,
-      savedAt: new Date().toISOString(),
-    };
-    setSavedHistory((prev) => [...prev, saved]);
-    toast.success("번호가 히스토리에 저장되었습니다.");
-  }, [games]);
-
-  const handleDeleteFromHistory = useCallback((id: string) => {
-    setSavedHistory((prev) => prev.filter((item) => item.id !== id));
-    toast.info("저장된 번호가 삭제되었습니다.");
-  }, []);
-
-  const handleClearHistory = useCallback(() => {
-    setSavedHistory([]);
-    toast.info("히스토리가 초기화되었습니다.");
-  }, []);
-
   const handleTabChange = useCallback(
     (newTab: string) => {
       const tab = newTab as TabValue;
@@ -169,17 +123,8 @@ export function LottoApp() {
           <p className="text-muted-foreground">행운의 번호를 생성하세요 ✨</p>
         </div>
 
-        {/* Main layout: sidebar + content */}
-        <div className="flex flex-col lg:flex-row gap-6 items-start">
-          {/* Left Sidebar - History */}
-          <LottoSidebar
-            history={savedHistory}
-            onDelete={handleDeleteFromHistory}
-            onClearAll={handleClearHistory}
-          />
-
-          {/* Main Content */}
-          <div className="flex-1 min-w-0">
+        {/* Main Content */}
+        <div className="flex-1 min-w-0">
             <Tabs
               value={activeTab}
               onValueChange={handleTabChange}
@@ -287,7 +232,6 @@ export function LottoApp() {
                         onToggleFavorite={handleToggleFavorite}
                         onRegenerate={handleRegenerate}
                         onDelete={handleDelete}
-                        onSave={handleSaveToHistory}
                       />
                     ))}
                   </CardContent>
@@ -353,7 +297,6 @@ export function LottoApp() {
                             onToggleFavorite={handleToggleFavorite}
                             onRegenerate={handleRegenerate}
                             onDelete={handleDelete}
-                            onSave={handleSaveToHistory}
                           />
                         ))}
                       </div>
@@ -385,7 +328,6 @@ export function LottoApp() {
             <p className="text-center text-xs text-muted-foreground">
               로또 6/45 번호 생성기 · 행운을 빕니다! 🍀
             </p>
-          </div>
         </div>
       </div>
     </div>
